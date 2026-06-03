@@ -1,0 +1,163 @@
+﻿CREATE TABLE "Store" (
+    Id UUID PRIMARY KEY,
+    Name VARCHAR(255),
+    Type VARCHAR(100),
+    Owner VARCHAR(255),
+    Address VARCHAR(500)
+);
+
+CREATE TABLE "User" (
+    Id UUID PRIMARY KEY,
+    FirstName VARCHAR(255),
+    LastName VARCHAR(255),
+    CreatedAt TIMESTAMP,
+    EmailAddress VARCHAR(255),
+    PhoneNumber VARCHAR(50)
+);
+
+CREATE TABLE "DeliveryPerson" (
+    Id UUID PRIMARY KEY,
+    FirstName VARCHAR(255),
+    LastName VARCHAR(255),
+    Vehicle VARCHAR(100),
+    Age INTEGER,
+    Fulltime BOOLEAN
+);
+
+CREATE TABLE "Product" (
+    Id UUID PRIMARY KEY,
+    Name VARCHAR(255),
+    Price NUMERIC(10,2),
+    Type VARCHAR(100),
+    Description TEXT,
+    StoreId UUID not null references "Store"(Id),
+);
+
+CREATE TABLE "Order" (
+    Id UUID PRIMARY KEY,
+    OrderTime TIMESTAMP,
+    Total NUMERIC(10,2),
+    UserId UUID references "User"(Id) NOT NULL,
+    DeliveryPersonId UUID references "DeliveryPerson"(Id),
+    Status VARCHAR(50)
+);
+
+CREATE TABLE "OrderProduct" (
+    Id UUID PRIMARY KEY,
+    OrderId UUID references "Order"(Id) NOT NULL,
+    ProductId UUID references "Product"(Id) NOT NULL,
+    Quantity INTEGER NOT NULL
+);
+
+drop table "Order";
+drop table "OrderProduct";
+
+insert into "Store" (Id, Name, Type, Owner, Address) values ('8fab039d-bd67-4a9d-9373-ba8ff110eedd', 'Morsel ex Rocher', 'Restoran', 'Marija Marijanović', 'Stjepana Radića 24');
+insert into "Store" (Id, Name, Type, Owner, Address) values ('0ebd3084-6d75-484e-b635-ff36188d3436', 'Pietrro bar', 'Restoran', 'Marija Marijanović', 'Stjepana Radića 72');
+insert into "Store" (Id, Name, Type, Owner, Address) values ('82610fb1-c7a8-4110-ace5-c84e6f40be94', 'MacDonalds', 'Restoran', 'Quality Food d.o.o', 'Kralja Tomislava 240');
+insert into "Store" (Id, Name, Type, Owner, Address) values ('326670f9-8ae1-46d0-a59e-f26965f6589c', 'Ljekarna Tripolski', 'Drogerija', 'Ljekarna Tripolski d.o.o', 'Ivana Gorana Kovačića 4');
+
+insert into "User" (Id, FirstName, LastName, CreatedAt, EmailAddress, PhoneNumber) values ('a1b2c3d4-e5f6-7890-abcd-ef1234567801', 'Marko',    'Horvat',      '2024-01-15 08:30:00', 'marko.horvat@gmail.com',    '+385911234567');
+insert into "User" (Id, FirstName, LastName, CreatedAt, EmailAddress, PhoneNumber) values ('a1b2c3d4-e5f6-7890-abcd-ef1234567802', 'Ana',      'Kovačević',   '2024-02-20 10:15:00', 'ana.kovacevic@gmail.com',   '+385921234568');
+insert into "User" (Id, FirstName, LastName, CreatedAt, EmailAddress, PhoneNumber) values ('a1b2c3d4-e5f6-7890-abcd-ef1234567803', 'Tomislav', 'Babić',       '2024-03-05 14:45:00', 'tomislav.babic@net.hr',     '+385951234569');
+insert into "User" (Id, FirstName, LastName, CreatedAt, EmailAddress, PhoneNumber) values ('a1b2c3d4-e5f6-7890-abcd-ef1234567804', 'Petra',    'Marić',       '2024-04-10 09:00:00', 'petra.maric@yahoo.com',     '+385991234570');
+
+insert into "DeliveryPerson" (Id, FirstName, LastName, Vehicle, Age, Fulltime) values('b2c3d4e5-f6a7-8901-bcde-f12345678901', 'Ivan',    'Novak',    'Bicikl',       24, FALSE);
+insert into "DeliveryPerson" (Id, FirstName, LastName, Vehicle, Age, Fulltime) values ('b2c3d4e5-f6a7-8901-bcde-f12345678902', 'Stjepan', 'Jurić',    'Motor',        31, TRUE);
+insert into "DeliveryPerson" (Id, FirstName, LastName, Vehicle, Age, Fulltime) values ('b2c3d4e5-f6a7-8901-bcde-f12345678903', 'Maja',    'Perić',    'Automobil',    27, TRUE);
+insert into "DeliveryPerson" (Id, FirstName, LastName, Vehicle, Age, Fulltime) values ('b2c3d4e5-f6a7-8901-bcde-f12345678904', 'Luka',    'Blažević', 'Motor',        22, FALSE);
+
+insert into "Product" (Id, Name, Price, Type, Description, StoreId) values ('d4e5f6a7-b8c9-0123-defa-234567890001', 'Classic Burger',         8.90,  'Hamburger', 'Goveđi burger s umakom od senfa, kiselim krastavcima i crvenim lukom.',         '8fab039d-bd67-4a9d-9373-ba8ff110eedd');
+insert into "Product" (Id, Name, Price, Type, Description, StoreId) values ('d4e5f6a7-b8c9-0123-defa-234567890007', 'Spicy Mexican Tortilla',    8.50, 'Tortilja',  'Začinjena mljevena junetina, salsa, cheddar i kiselo vrhnje u tortilji.',      '0ebd3084-6d75-484e-b635-ff36188d3436');
+insert into "Product" (Id, Name, Price, Type, Description, StoreId) values ('d4e5f6a7-b8c9-0123-defa-234567890011', 'McNuggets 9kom',            4.90, 'Zalogajčići','Hrskavi pileći nuggetsi posluženi s umakom po izboru.',                       '82610fb1-c7a8-4110-ace5-c84e6f40be94');
+insert into "Product" (Id, Name, Price, Type, Description, StoreId) values ('d4e5f6a7-b8c9-0123-defa-234567890014', 'Normabel 5mg (30 tab)',     6.80, 'Sedativ',   'Diazepam 5mg, koristi se za smanjenje anksioznosti i napetosti.',              '326670f9-8ae1-46d0-a59e-f26965f6589c');
+
+insert into "Order" (Id, OrderTime, Total, UserId, DeliveryPersonId, Status) values ('e5f6a7b8-c9d0-1234-efab-345678900001', '2024-05-01 12:00:00', 17.40, 'a1b2c3d4-e5f6-7890-abcd-ef1234567801', 'b2c3d4e5-f6a7-8901-bcde-f12345678902', 'Dostavljeno'); 
+insert into "Order" (Id, OrderTime, Total, UserId, DeliveryPersonId, Status) values ('e5f6a7b8-c9d0-1234-efab-345678900002', '2024-05-02 18:30:00', 10.00, 'a1b2c3d4-e5f6-7890-abcd-ef1234567802', 'b2c3d4e5-f6a7-8901-bcde-f12345678901', 'U dostavi');
+insert into "Order" (Id, OrderTime, Total, UserId, DeliveryPersonId, Status) values ('e5f6a7b8-c9d0-1234-efab-345678900003', '2024-05-03 09:15:00', 12.90, 'a1b2c3d4-e5f6-7890-abcd-ef1234567803', 'b2c3d4e5-f6a7-8901-bcde-f12345678903', 'Dostavljeno');
+insert into "Order" (Id, OrderTime, Total, UserId, DeliveryPersonId, Status) values ('e5f6a7b8-c9d0-1234-efab-345678900004', '2024-05-04 20:00:00',  8.50, 'a1b2c3d4-e5f6-7890-abcd-ef1234567804', 'b2c3d4e5-f6a7-8901-bcde-f12345678904', 'Na čekanju');
+insert into "Order" (Id, OrderTime, Total, UserId, Status) values ('e5f6a7b8-c9d0-1234-efab-345678900005', '2024-05-05 20:00:00',  8.50, 'a1b2c3d4-e5f6-7890-abcd-ef1234567801', 'Na čekanju');
+
+insert into "OrderProduct" (Id, OrderId, ProductId, Quantity) values ('f6a7b8c9-d0e1-2345-fabc-456789000001', 'e5f6a7b8-c9d0-1234-efab-345678900001', 'd4e5f6a7-b8c9-0123-defa-234567890001', 2);
+insert into "OrderProduct" (Id, OrderId, ProductId, Quantity) values ('f6a7b8c9-d0e1-2345-fabc-456789000002', 'e5f6a7b8-c9d0-1234-efab-345678900001', 'd4e5f6a7-b8c9-0123-defa-234567890007', 1);
+insert into "OrderProduct" (Id, OrderId, ProductId, Quantity) values ('f6a7b8c9-d0e1-2345-fabc-456789000003', 'e5f6a7b8-c9d0-1234-efab-345678900001', 'd4e5f6a7-b8c9-0123-defa-234567890011', 1);
+insert into "OrderProduct" (Id, OrderId, ProductId, Quantity) values ('f6a7b8c9-d0e1-2345-fabc-456789000004', 'e5f6a7b8-c9d0-1234-efab-345678900002', 'd4e5f6a7-b8c9-0123-defa-234567890014', 1);
+
+select * from "User";
+select * from "Product";
+select * from "Store";
+select * from "Order";
+select * from "DeliveryPerson";
+select * from "OrderProduct";
+
+UPDATE "Order" SET Total = 31.20 WHERE Id = 'e5f6a7b8-c9d0-1234-efab-345678900001';
+UPDATE "Order" SET Total = 6.80  WHERE Id = 'e5f6a7b8-c9d0-1234-efab-345678900002';
+
+select u.FirstName, u.LastName, dp.FirstName, dp.LastName 
+	from "Order" as o inner join "User" as u on u.Id = o.UserId 
+	right join "DeliveryPerson" as dp on dp.Id = o.DeliveryPersonId;
+
+select p.Name, p.Price,  s.Name, s.Address 
+	from "Product" as p inner join "Store" as s on p.StoreId = s.Id 
+	where p.Price > 7.0
+
+select u.FirstName, u.LastName, o.Id as "Broj narudzbe", SUM(op.Quantity) as "Broj proizvoda" 
+	from "User" as u inner join "Order" as o on u.Id = o.UserId 
+	inner join "OrderProduct" as op on op.OrderId = o.Id 
+	group by u.FirstName, u.LastName, o.Id
+	order by "Broj proizvoda" ASC
+
+select s.Name, s.Owner, s.Address, SUM(op.Quantity) as "Ukupan broj narucenih proizvoda" 
+	from "Store" as s inner join "Product" as p on s.Id = p.StoreId 
+	inner join "OrderProduct" as op on op.ProductId = p.Id 
+	group by s.Name, s.Owner, s.Address
+	order by "Ukupan broj narucenih proizvoda" DESC
+
+select u.FirstName, u.LastName, o.Id as "Broj narudzbe", count(distinct s.Id) as "Broj razlicitih trgovina" 
+	from "User" as u inner join "Order" as o on u.Id = o.UserId 
+	inner join "OrderProduct" as op on o.Id = op.OrderId 
+	inner join "Product" as p on op.ProductId = p.Id
+	inner join "Store" as s on s.Id = p.StoreId
+	group by u.FirstName, u.LastName, o.Id
+	having count(distinct s.Id) > 1
+
+delete from "OrderProduct" as op
+	where op.OrderId in (
+    	select Id from "Order" as o where o.UserId = 'a1b2c3d4-e5f6-7890-abcd-ef1234567801'
+	);
+
+delete from "Order" as o
+	where o.UserId = 'a1b2c3d4-e5f6-7890-abcd-ef1234567801';
+	
+delete from "User" as u where u.Id = 'a1b2c3d4-e5f6-7890-abcd-ef1234567801'
+
+
+#####################################################################
+##########        MODELI IZ APLIKACIJE U DB     #####################
+#####################################################################
+create table "Food" (
+	Id int primary key not null,
+	Name varchar(50) not null,
+	Description varchar(255) not null,
+	TypeMeal varchar(50) not null,
+	Brand varchar not null 
+);
+
+create table "Member" (
+	Id int primary key not null,
+	FirstName varchar not null,
+	LastName varchar not null,
+	Height int,
+	Weight int,
+	BMI decimal,
+	FoodId int references "Food"(Id)
+);
+
+insert into "Food" (Id, Name, Description, TypeMeal, Brand) values (1, 'Zob s bananom', 'Zobene pahuljice s bananom i medom, bogato vlaknima.', 'Doručak', 'Žitko');
+insert into "Food" (Id, Name, Description, TypeMeal, Brand) values (2, 'Piletina s rižom', 'Kuhana piletina s integralnom rižom i povrćem.', 'Ručak', 'FitMeal');
+
+insert into "Member" (Id, FirstName, LastName, Height, Weight, BMI, FoodId) values (1, 'Luka',  'Horvatić', 182, 85, 25.7, 1);
+insert into "Member" (Id, FirstName, LastName, Height, Weight, BMI, FoodId) values (2, 'Petra', 'Šimić',    165, 58, 21.3, 2);
+
+select m.FirstName, m.LastName, f.Name, f.Brand from "Member" as m join "Food" as f on m.FoodId = f.Id;
+select m.FirstName, m.LastName from "Member" as m where m.BMI > 24;
