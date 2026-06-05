@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Npgsql;
+using System.Text;
 
 namespace Example.WebApi.Controllers
 {
@@ -7,67 +9,209 @@ namespace Example.WebApi.Controllers
     [ApiController]
     public class FoodController : ControllerBase
     {
-        private static List<Food> _foods = new List<Food>();
-        public FoodController()
-        {
-
-        }
+        string CONNECTION_STRING = "Host=localhost;Port=5432;Database=testdb2;Username=postgres;Password=postgres";
 
         [HttpGet("getAll")]
-        public IActionResult getAll([FromQuery] string typeMeal, string brand)
+        public IActionResult getAll([FromQuery] string typeMeal = "", string brand = "" )
         {
-            var filter = _foods.AsEnumerable();
-            if (typeMeal != null)
-                filter = filter.Where(x => x.TypeMeal == typeMeal);
-            if (brand != null)
-                filter = filter.Where(x => x.Brand == brand);
-            filter = filter.ToList();
-            if (filter.Count() > 0)
-                return Ok(filter);
-            return BadRequest("There are no records");
+            try
+            {
+                List<Food> foods = new List<Food>();
+                using NpgsqlConnection connection = new NpgsqlConnection(CONNECTION_STRING);
+
+                StringBuilder sb = new StringBuilder();
+
+                sb.Append("SELECT * FROM \"Food\" WHERE 1 = 1 ");
+                using NpgsqlCommand command = new NpgsqlCommand();
+                command.Connection = connection;
+
+                if (typeMeal != "")
+                {
+                    sb.Append("AND \"TypeMeal\" = @typemeal");
+                    command.Parameters.AddWithValue("@typemeal", typeMeal);
+                }
+                if (brand != "")
+                {
+                    sb.Append("AND \"Brand\" = @brand");
+                    command.Parameters.AddWithValue("@brand", brand);
+                }
+
+                command.CommandText = sb.ToString();
+
+                connection.Open();
+                NpgsqlDataReader reader = command.ExecuteReader();
+
+                if (reader.HasRows)
+                {
+                    while (reader.Read())
+                    {
+                        Food food = new Food();
+                        food.Id = Convert.ToInt32(reader["Id"]);
+                        food.Name = reader["Name"].ToString();
+                        food.Description = reader["Description"].ToString();
+                        food.TypeMeal = reader["TypeMeal"].ToString();
+                        food.Brand = reader["Brand"].ToString();
+                        foods.Add(food);
+                    }
+                }
+
+                connection.Close();
+
+                if (foods.Count() > 0)
+                {
+                    return Ok(foods);
+                }
+                return BadRequest("");
+            }
+            catch (Exception e)
+            {
+                return BadRequest("");
+            }
         }
   
         [HttpGet("{id}")]
         public IActionResult FindFood(int id)
         {
-            var food = _foods.FirstOrDefault(x => x.Id == id);
-            if (food != null)
-                return Ok(food);
-            return NotFound("Food is not found");
+            try
+            {
+                Food food = new Food();
+                using NpgsqlConnection connection = new NpgsqlConnection(CONNECTION_STRING);
+
+                string comm = "SELECT * FROM \"Food\" WHERE \"Id\" = @id";
+                using NpgsqlCommand command = new NpgsqlCommand(comm);
+                command.Connection = connection;
+                command.Parameters.AddWithValue("@id", id);
+
+                connection.Open();
+
+                NpgsqlDataReader reader = command.ExecuteReader();
+
+                if(reader.HasRows)
+                {
+                    reader.Read();
+                    food.Id = Convert.ToInt32(reader["Id"]);
+                    food.Name = reader["Name"].ToString();
+                    food.Description = reader["Description"].ToString();
+                    food.TypeMeal = reader["TypeMeal"].ToString();
+                    food.Brand = reader["Brand"].ToString();
+                }
+
+                connection.Close();
+
+                if (food.Name != null)
+                {
+                    return Ok(food);
+                }
+
+                return BadRequest("");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPost]
         public IActionResult AddFood(Food food)
         {
-            if (_foods.Count() > 0)
-                food.Id = _foods.Max(x => x.Id) + 1;
-            else
-                food.Id = 1;
-            var count = _foods.Count();
-            _foods.Add(food);
-            if (_foods.Count() - count > 0)
-                return Ok(food);
-            return BadRequest("Something went wrong");
+            try
+            {
+                using NpgsqlConnection connection = new NpgsqlConnection(CONNECTION_STRING);
+
+                string comm = "INSERT INTO \"Food\" (\"Name\", \"Description\", \"TypeMeal\", \"Brand\") VALUES (@name, @description, @typemeal, @brand)";
+                using NpgsqlCommand command = new NpgsqlCommand(comm);
+                command.Connection = connection;
+
+                command.Parameters.AddWithValue("@name", food.Name);
+                command.Parameters.AddWithValue("@description", food.Description);
+                command.Parameters.AddWithValue("@typemeal", food.TypeMeal);
+                command.Parameters.AddWithValue("@brand", food.Brand);
+
+
+                connection.Open();
+
+                var rowsAffected = command.ExecuteNonQuery();
+
+                connection.Close();
+
+                if (rowsAffected > 0)
+                {
+                    return Ok("Succesfully added");
+                }
+                return BadRequest("");
+
+
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpPut("{id}")]
         public IActionResult UpdateFood(int id, Food newFood)
         {
-            var idx = _foods.FindIndex(x => x.Id == id);
-            if (idx == -1)
-                return NotFound("Food does not exist");
-            _foods[idx] = newFood;
-            return NoContent();
+            try
+            {
+                using NpgsqlConnection connection = new NpgsqlConnection(CONNECTION_STRING);
+
+                string comm = "UPDATE \"Food\" SET (\"Name\", \"Description\", \"TypeMeal\", \"Brand\") = (@name, @description, @typemeal, @brand) WHERE \"Id\" = @id";
+                using NpgsqlCommand command = new NpgsqlCommand(comm, connection);
+
+                command.Parameters.AddWithValue("@name", newFood.Name);
+                command.Parameters.AddWithValue("@description", newFood.Description);
+                command.Parameters.AddWithValue("@typemeal", newFood.TypeMeal);
+                command.Parameters.AddWithValue("@brand", newFood.Brand);
+                command.Parameters.AddWithValue("@id", id);
+
+                connection.Open();
+
+                int affectedRows = command.ExecuteNonQuery();
+
+                connection.Close();
+
+                if(affectedRows > 0)
+                {
+                    return Ok("Updated sucesfully");
+                }
+
+                return BadRequest("");
+
+            }
+            catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         [HttpDelete("{id}")]
         public IActionResult RemoveFood(int id)
         {
-            var food = _foods.FirstOrDefault(x => x.Id == id);
-            if (food == null)
-                return NotFound("Food does not exist");
-            _foods.Remove(food);
-            return NoContent();
+            try
+            {
+                using NpgsqlConnection connection = new NpgsqlConnection(CONNECTION_STRING);
+
+                string comm = "DELETE FROM \"Food\" WHERE \"Id\" = @id";
+                using NpgsqlCommand command = new NpgsqlCommand(comm, connection);
+                command.Parameters.AddWithValue("@id", id);
+
+                connection.Open();
+
+                int affectedRows = command.ExecuteNonQuery();
+
+                connection.Close();
+
+                if (affectedRows > 0)
+                {
+                    return Ok("Deleted sucesfully");
+                }
+
+                return BadRequest("");
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
     }
 }
