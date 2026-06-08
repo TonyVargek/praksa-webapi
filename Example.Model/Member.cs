@@ -1,4 +1,4 @@
-﻿namespace Example.WebApi
+﻿namespace Example.Model
 {
     public class Member
     {

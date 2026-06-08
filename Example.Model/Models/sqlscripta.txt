@@ -146,28 +146,35 @@ DELETE FROM "User"
 ##########        MODELI IZ APLIKACIJE U DB     #####################
 #####################################################################
 create table "Food" (
-	Id int primary key not null,
-	Name varchar(50) not null,
-	Description varchar(255) not null,
-	TypeMeal varchar(50) not null,
-	Brand varchar not null 
+	"Id" SERIAL primary key not null,
+	"Name" varchar(50) not null,
+	"Description" varchar(255) not null,
+	"TypeMeal" varchar(50) not null,
+	"Brand" varchar not null 
 );
 
 create table "Member" (
-	Id int primary key not null,
-	FirstName varchar not null,
-	LastName varchar not null,
-	Height int,
-	Weight int,
-	BMI decimal,
-	FoodId int references "Food"(Id)
+	"Id" SERIAL primary key not null,
+	"FirstName" varchar not null,
+	"LastName" varchar not null,
+	"Height" int,
+	"Weight" int,
+	"BMI" decimal,
+	"FoodId" int references "Food"("Id")
 );
 
-insert into "Food" (Id, Name, Description, TypeMeal, Brand) values (1, 'Zob s bananom', 'Zobene pahuljice s bananom i medom, bogato vlaknima.', 'Doručak', 'Žitko');
-insert into "Food" (Id, Name, Description, TypeMeal, Brand) values (2, 'Piletina s rižom', 'Kuhana piletina s integralnom rižom i povrćem.', 'Ručak', 'FitMeal');
 
-insert into "Member" (Id, FirstName, LastName, Height, Weight, BMI, FoodId) values (1, 'Luka',  'Horvatić', 182, 85, 25.7, 1);
-insert into "Member" (Id, FirstName, LastName, Height, Weight, BMI, FoodId) values (2, 'Petra', 'Šimić',    165, 58, 21.3, 2);
+insert into "Food" ("Name", "Description", "TypeMeal", "Brand") values ('Zob s bananom', 'Zobene pahuljice s bananom i medom, bogato vlaknima.', 'Doručak', 'Žitko');
+insert into "Food" ("Name", "Description", "TypeMeal", "Brand") values ('Piletina s rižom', 'Kuhana piletina s integralnom rižom i povrćem.', 'Ručak', 'FitMeal');
+insert into "Food" ("Name", "Description", "TypeMeal", "Brand") values ('Piletina s curryem', 'Kuhana piletina s curyyem i povrćem.', 'Ručak', 'FitMeal');
+
+
+insert into "Member" ("FirstName", "LastName", "Height", "Weight", "BMI", "FoodId") values ('Luka',  'Horvatić', 182, 85, 25.7, 1);
+insert into "Member" ("FirstName", "LastName", "Height", "Weight", "BMI", "FoodId") values ('Petra', 'Šimić',    165, 58, 21.3, 2);
+
+select * from "Food";
 
 select m.FirstName, m.LastName, f.Name, f.Brand from "Member" as m join "Food" as f on m.FoodId = f.Id;
 select m.FirstName, m.LastName from "Member" as m where m.BMI > 24;
+
+SELECT m.*, f."Name", f."Description", f."TypeMeal", f."Brand" FROM "Member" as m LEFT JOIN "Food" as f on m."FoodId" = f."Id" WHERE 1 = 1  AND m."BMI" > 20 
