@@ -10,11 +10,11 @@ namespace Example.Repository.Common
 {
     public interface IMemberRepository
     {
-        public bool Add(Member member);
-        public bool Add(List<Member> member);
-        public bool Update(int id, Member newMember);
-        public bool Delete(int id);
-        public Member GetById(int id);
-        public List<Member> GetAll(MemberFilter filter);
+        public Task<bool> AddAsync(Member member);
+        public Task<bool> AddAsync(List<Member> member);
+        public Task<bool> UpdateAsync(int id, Member newMember);
+        public Task<bool> DeleteAsync(int id);
+        public Task<Member> GetByIdAsync(int id);
+        public Task<List<Member>> GetAllAsync(MemberFilter filter);
     }
 }

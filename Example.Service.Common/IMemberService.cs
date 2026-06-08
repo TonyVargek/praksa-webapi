@@ -10,11 +10,11 @@ namespace Example.Service.Common
 {
     public interface IMemberService
     {
-        public bool Add(Member member);
-        public bool Add(List<Member> members);
-        public bool Update(int id, Member newMember);
-        public bool Delete(int id);
-        public List<Member> GetAll(MemberFilter filter);
-        public Member GetById(int id);
+        public Task<bool> AddAsync(Member member);
+        public Task<bool> AddAsync(List<Member> members);
+        public Task<bool> UpdateAsync(int id, Member newMember);
+        public Task<bool> DeleteAsync(int id);
+        public Task<List<Member>> GetAllAsync(MemberFilter filter);
+        public Task<Member> GetByIdAsync(int id);
     }
 }

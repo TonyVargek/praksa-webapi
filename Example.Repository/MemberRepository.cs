@@ -13,7 +13,7 @@ namespace Example.Repository
     public class MemberRepository : IMemberRepository
     {
         string CONNECTION_STRING = "Host=localhost;Port=5432;Database=testdb2;Username=postgres;Password=postgres";
-        public bool Add(Member member)
+        public async Task<bool> AddAsync(Member member)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace Example.Repository
 
                 connection.Open();
 
-                int affectedRows = command.ExecuteNonQuery();
+                int affectedRows = await command.ExecuteNonQueryAsync();
 
                 connection.Close();
 
@@ -48,7 +48,7 @@ namespace Example.Repository
             }
         }
 
-        public bool Add(List<Member> members)
+        public async Task<bool> AddAsync(List<Member> members)
         {
             try
             {
@@ -79,7 +79,7 @@ namespace Example.Repository
 
                 connection.Open();
 
-                int affectedRows = command.ExecuteNonQuery();
+                int affectedRows = await command.ExecuteNonQueryAsync();
 
                 connection.Close();
 
@@ -96,7 +96,7 @@ namespace Example.Repository
             }
         }
 
-        public bool Delete(int id)
+        public async Task<bool> DeleteAsync(int id)
         {
             try
             {
@@ -110,7 +110,7 @@ namespace Example.Repository
 
                 connection.Open();
 
-                int affectedRows = command.ExecuteNonQuery();
+                int affectedRows = await command.ExecuteNonQueryAsync();
 
                 connection.Close();
 
@@ -127,7 +127,7 @@ namespace Example.Repository
             }
         }
 
-        public List<Member> GetAll(MemberFilter filter)
+        public async Task<List<Member>> GetAllAsync(MemberFilter filter)
         {
             try
             {
@@ -165,7 +165,7 @@ namespace Example.Repository
 
                 connection.Open();
 
-                NpgsqlDataReader reader = command.ExecuteReader();
+                NpgsqlDataReader reader = await command.ExecuteReaderAsync();
 
                 if (reader.HasRows)
                 {
@@ -211,7 +211,7 @@ namespace Example.Repository
             }
         }
 
-        public Member GetById(int id)
+        public async Task<Member> GetByIdAsync(int id)
         {
             try
             {
@@ -230,7 +230,7 @@ namespace Example.Repository
 
                 connection.Open();
 
-                NpgsqlDataReader reader = command.ExecuteReader();
+                NpgsqlDataReader reader = await command.ExecuteReaderAsync();
 
                 if (reader.HasRows)
                 {
@@ -269,7 +269,7 @@ namespace Example.Repository
             }
         }
 
-        public bool Update(int id, Member newMember)
+        public async Task<bool> UpdateAsync(int id, Member newMember)
         {
             try
             {
@@ -289,7 +289,7 @@ namespace Example.Repository
 
                 connection.Open();
 
-                int affectedRows = command.ExecuteNonQuery();
+                int affectedRows = await command.ExecuteNonQueryAsync();
 
                 connection.Close();
 

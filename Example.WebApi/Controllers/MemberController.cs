@@ -13,10 +13,10 @@ namespace Example.WebApi.Controllers
     public class MemberController : ControllerBase
     {
         [HttpGet("getAll")]
-        public IActionResult GetAll([FromQuery] MemberFilter filter)
+        public async Task<IActionResult> GetAll([FromQuery] MemberFilter filter)
         {
             MemberService service = new MemberService();
-            var res = service.GetAll(filter);
+            var res = await service.GetAllAsync(filter);
             if (res != null)
             {
                 return Ok(res);
@@ -25,10 +25,10 @@ namespace Example.WebApi.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(int id)
+        public async Task<IActionResult> Get(int id)
         {
             MemberService service = new MemberService();
-            var res = service.GetById(id);
+            var res = await service.GetByIdAsync(id);
             if (res != null)
             {
                 return Ok(res);
@@ -37,10 +37,10 @@ namespace Example.WebApi.Controllers
         }
 
         [HttpPost]
-        public IActionResult Post(Member member)
+        public async Task<IActionResult> Post(Member member)
         {
             MemberService service = new MemberService();
-            var res = service.Add(member);
+            var res = await service.AddAsync(member);
             if (res == true)
             {
                 return NoContent();
@@ -49,10 +49,10 @@ namespace Example.WebApi.Controllers
         }
 
         [HttpPost("many")]
-        public IActionResult PostMany(List<Member> members)
+        public async Task<IActionResult> PostMany(List<Member> members)
         {
             MemberService service = new MemberService();
-            var res = service.Add(members);
+            var res = await service.AddAsync(members);
             if (res == true)
             {
                 return NoContent();
@@ -61,10 +61,10 @@ namespace Example.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Put(int id, Member newMember)
+        public async Task<IActionResult> Put(int id, Member newMember)
         {
             MemberService service = new MemberService();
-            var res = service.Update(id, newMember);
+            var res = await service.UpdateAsync(id, newMember);
             if (res == true)
             {
                 return NoContent();
@@ -73,10 +73,10 @@ namespace Example.WebApi.Controllers
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             MemberService service = new MemberService();
-            var res = service.Delete(id);
+            var res = await service.DeleteAsync(id);
             if (res == true)
             {
                 return NoContent();
