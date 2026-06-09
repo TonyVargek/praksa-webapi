@@ -7,12 +7,18 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac" Version="9.1.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="11.0.0" />
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Example.Common\Example.Common.csproj" />
     <ProjectReference Include="..\Example.Model\Example.Model.csproj" />
+    <ProjectReference Include="..\Example.Repository.Common\Example.Repository.Common.csproj" />
+    <ProjectReference Include="..\Example.Repository\Example.Repository.csproj" />
     <ProjectReference Include="..\Example.Service\Example.Service.csproj" />
   </ItemGroup>
 

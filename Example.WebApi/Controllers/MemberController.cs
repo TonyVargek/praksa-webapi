@@ -1,10 +1,8 @@
 ﻿using Example.Common;
 using Example.Model;
-using Example.Service;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Npgsql;
-using System.Text;
+using AutoMapper;
+using Example.Service.Common;
 
 namespace Example.WebApi.Controllers
 {
@@ -12,75 +10,92 @@ namespace Example.WebApi.Controllers
     [ApiController]
     public class MemberController : ControllerBase
     {
-        [HttpGet("getAll")]
-        public async Task<IActionResult> GetAll([FromQuery] MemberFilter filter)
+        protected IMemberService MemberService { get; }
+        protected IMapper Mapper { get; }
+
+        public MemberController(IMemberService memberService, IMapper mapper)
         {
-            MemberService service = new MemberService();
-            var res = await service.GetAllAsync(filter);
+            MemberService = memberService;
+            Mapper = mapper;
+        }
+
+        [HttpGet("getAll")]
+        public async Task<IActionResult> GetAll(string firstName = null, string lastName = null,
+            string favoriteFood = null, float BMI = -1)
+        {
+            MemberFilter filter = new MemberFilter()
+            {
+                FirstName = firstName,
+                LastName = lastName,
+                FavoriteFood = favoriteFood,
+                BMI = BMI
+            };
+            var res = await MemberService.GetAllAsync(filter);
             if (res != null)
             {
                 return Ok(res);
             }
+
             return BadRequest();
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            MemberService service = new MemberService();
-            var res = await service.GetByIdAsync(id);
+            var res = await MemberService.GetByIdAsync(id);
             if (res != null)
             {
                 return Ok(res);
             }
+
             return BadRequest();
         }
 
         [HttpPost]
         public async Task<IActionResult> Post(Member member)
         {
-            MemberService service = new MemberService();
-            var res = await service.AddAsync(member);
+            var res = await MemberService.AddAsync(member);
             if (res == true)
             {
                 return NoContent();
             }
+
             return BadRequest();
         }
 
         [HttpPost("many")]
         public async Task<IActionResult> PostMany(List<Member> members)
         {
-            MemberService service = new MemberService();
-            var res = await service.AddAsync(members);
+            var res = await MemberService.AddAsync(members);
             if (res == true)
             {
                 return NoContent();
             }
+
             return BadRequest();
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, Member newMember)
+        public async Task<IActionResult> Put(int id, RestMember restMember)
         {
-            MemberService service = new MemberService();
-            var res = await service.UpdateAsync(id, newMember);
+            var res = await MemberService.UpdateAsync(id, Mapper.Map<Member>(restMember));
             if (res == true)
             {
                 return NoContent();
             }
+
             return BadRequest();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            MemberService service = new MemberService();
-            var res = await service.DeleteAsync(id);
+            var res = await MemberService.DeleteAsync(id);
             if (res == true)
             {
                 return NoContent();
             }
+
             return BadRequest();
         }
     }

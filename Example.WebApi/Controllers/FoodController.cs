@@ -1,10 +1,8 @@
-﻿using Example.Common;
+﻿using AutoMapper;
+using Example.Common;
 using Example.Model;
-using Example.Service;
-using Microsoft.AspNetCore.Http;
+using Example.Service.Common;
 using Microsoft.AspNetCore.Mvc;
-using Npgsql;
-using System.Text;
 
 namespace Example.WebApi.Controllers
 {
@@ -12,76 +10,89 @@ namespace Example.WebApi.Controllers
     [ApiController]
     public class FoodController : ControllerBase
     {
+        protected IFoodService FoodService { get; }
+        protected IMapper Mapper { get; }
+
+        public FoodController(IFoodService foodService, IMapper mapper)
+        {
+            FoodService = foodService;
+            Mapper = mapper;
+        }
 
         [HttpGet("getAll")]
-        public async Task<IActionResult> GetAll([FromQuery] FoodFilter filter)
+        public async Task<IActionResult> GetAll(string typeMeal = null, string brand = null)
         {
-            FoodService service = new FoodService();
-            var foods = await service.GetAllAsync(filter);
+            FoodFilter filter = new FoodFilter()
+            {
+                TypeMeal = typeMeal,
+                Brand = brand
+            };
+            var foods = await FoodService.GetAllAsync(filter);
             if (foods != null)
             {
                 return Ok(foods);
             }
+
             return BadRequest();
         }
 
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(int id)
         {
-            FoodService service = new FoodService();
-            var food = await service.GetByIdAsync(id);
+            var food = await FoodService.GetByIdAsync(id);
             if (food != null)
             {
                 return Ok(food);
             }
+
             return BadRequest();
         }
 
         [HttpPost]
         public async Task<IActionResult> Post(Food food)
         {
-            FoodService service = new FoodService();
-            var res = await service.AddAsync(food);
+            var res = await FoodService.AddAsync(food);
             if (res == true)
             {
                 return NoContent();
             }
+
             return BadRequest();
         }
 
         [HttpPost("many")]
         public async Task<IActionResult> PostMany(List<Food> foods)
         {
-            FoodService service = new FoodService();
-            var res = await service.AddAsync(foods);
+            var res = await FoodService.AddAsync(foods);
             if (res == true)
             {
                 return NoContent();
             }
+
             return BadRequest();
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, Food newFood)
+        public async Task<IActionResult> Put(int id, RestFood restFood)
         {
-            FoodService service = new FoodService();
-            var res = await service.UpdateAsync(id, newFood);
+            var res = await FoodService.UpdateAsync(id, Mapper.Map<Food>(restFood));
             if (res == true)
             {
                 return NoContent();
             }
+
             return BadRequest();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(int id)
         {
-            FoodService service = new FoodService();
-            var res = await service.DeleteAsync(id);
+            var res = await FoodService.DeleteAsync(id);
             if (res == true)
             {
                 return NoContent();
             }
+
             return BadRequest();
         }
     }

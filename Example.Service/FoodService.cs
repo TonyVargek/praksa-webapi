@@ -1,51 +1,47 @@
 ﻿using Example.Common;
 using Example.Model;
-using Example.Repository;
 using Example.Service.Common;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Example.Repository.Common;
 
 namespace Example.Service
 {
     public class FoodService : IFoodService
     {
+        protected IFoodRepository FoodRepository { get; }
+
+        public FoodService(IFoodRepository foodRepository)
+        {
+            FoodRepository = foodRepository;
+        }
+
         public async Task<bool> AddAsync(Food food)
         {
-            FoodRepository repository = new FoodRepository();
-            return await repository.AddAsync(food);
+            return await FoodRepository.AddAsync(food);
         }
 
         public async Task<bool> AddAsync(List<Food> foods)
         {
-            FoodRepository repository = new FoodRepository();
-            return await repository.AddAsync(foods);
+            return await FoodRepository.AddAsync(foods);
         }
 
         public async Task<bool> DeleteAsync(int id)
         {
-            FoodRepository repository = new FoodRepository();
-            return await repository.DeleteAsync(id);
+            return await FoodRepository.DeleteAsync(id);
         }
 
         public async Task<List<Food>> GetAllAsync(FoodFilter filter)
         {
-            FoodRepository repository = new FoodRepository();
-            return await repository.GetAllAsync(filter);
+            return await FoodRepository.GetAllAsync(filter);
         }
 
         public async Task<Food> GetByIdAsync(int id)
         {
-            FoodRepository repository = new FoodRepository();
-            return await repository.GetByIdAsync(id);
+            return await FoodRepository.GetByIdAsync(id);
         }
 
         public async Task<bool> UpdateAsync(int id, Food newFood)
         {
-            FoodRepository repository = new FoodRepository();
-            return await repository.UpdateAsync(id, newFood);
+            return await FoodRepository.UpdateAsync(id, newFood);
         }
     }
 }

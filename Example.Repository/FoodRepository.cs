@@ -13,7 +13,7 @@ namespace Example.Repository
 {
     public class FoodRepository : IFoodRepository
     {
-        string CONNECTION_STRING = "Host=localhost;Port=5432;Database=testdb2;Username=postgres;Password=postgres";
+        string CONNECTION_STRING = "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=123";
         public async Task<bool> AddAsync(Food food)
         {
             try
@@ -197,7 +197,7 @@ namespace Example.Repository
                 if (reader.HasRows)
                 {
                     reader.Read();
-                    food.Id = Convert.ToInt32(reader["Id"]);
+                    food.Id = Convert.ToInt32(reader["Id"]);    
                     food.Name = reader["Name"].ToString();
                     food.Description = reader["Description"].ToString();
                     food.TypeMeal = reader["TypeMeal"].ToString();

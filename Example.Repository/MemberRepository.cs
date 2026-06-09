@@ -12,7 +12,7 @@ namespace Example.Repository
 {
     public class MemberRepository : IMemberRepository
     {
-        string CONNECTION_STRING = "Host=localhost;Port=5432;Database=testdb2;Username=postgres;Password=postgres";
+        string CONNECTION_STRING = "Host=localhost;Port=5432;Database=postgres;Username=postgres;Password=123";
         public async Task<bool> AddAsync(Member member)
         {
             try
