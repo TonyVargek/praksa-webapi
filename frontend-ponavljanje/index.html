@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="myForm">
+        <label for="firstName">First name:</label><br>
+        <input id="firstName" type="text" name="fname" value="John"><br>
+
+        <label for="lastName">Last name:</label><br>
+        <input id="lastName" type="text" name="lname" value="Doe"><br><br>
+
+        <label for="bornDate">Born date:</label><br>
+        <input id="bornDate" type="date" name="borndate" value="2026-06-18"><br><br>
+
+        <button id="submitButton" type="button" onclick="onSubmit()">Submit form</button>
+    </form>
+
+    <table id="myTable">
+        <thead>
+            <tr id="header">
+                <th>Index</th>
+                <th>First name</th>
+                <th>Last name</th>
+                <th>Born date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+        </tbody>
+    </table>
+
+    <h4>Update table: </h4>
+    <form id="myForm">
+        <label for="firstNameUpdate">First name:</label><br>
+        <input id="firstNameUpdate" type="text" name="fnameUpdate" value=""><br>
+
+        <label for="lastNameUpdate">Last name:</label><br>
+        <input id="lastNameUpdate" type="text" name="lnameUpdate" value=""><br><br>
+
+        <label for="bornDateUpdate">Born date:</label><br>
+        <input id="bornDateUpdate" type="date" name="borndateUpdate" value=""><br><br>
+
+        <button id="submitButtonUpdate" type="button" onclick="updateData()">Submit form</button>
+    </form>
+
+    <script src="function.js"></script>
+</body>
+</html>
